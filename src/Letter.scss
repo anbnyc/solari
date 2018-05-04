@@ -1,0 +1,61 @@
+$h: 180px;
+$w: 120px;
+
+.Letter{
+  height: $h;
+  width: $w;
+  display: inline-block;
+  margin: 0px 5px;
+  position: relative;
+  perspective: 1000px;
+
+  .flap{
+    height: $h/2;
+    width: $w;
+
+    background: #000;
+    border: 1px solid #fff;
+    overflow: hidden;
+    position: absolute;
+    transition-property: top;
+    transition-duration: 1000ms;
+    top: 0;
+
+    &.top,
+    &.middle:not(.flip){
+      border-bottom: 3px solid #000;
+    }
+    &.middle.flip{
+      border-bottom: 1px solid #000;
+    }
+    &.middle{
+      z-index: 1;
+      transform-origin: 0 100% 0;
+    }
+    &.bottom{
+      border-top: 3px solid #000;
+      top: $h/2;
+    }
+
+    .text{
+      width: 100%;
+      position: absolute;
+      left: 0;
+      font-size: 200px;
+      line-height: 180px;
+      color: #fff;
+      text-align: center;
+    }
+    &.top .text,
+    &.middle:not(.flip) .text{
+      top: 10px;
+    }
+    &.middle.flip .text{
+      top: -10px;
+    }
+    &.bottom .text{
+      top: -$h/2 + 10;
+    }
+
+  }
+}

@@ -6,10 +6,10 @@ import Letter from './Letter'
 class Display extends Component {
 
   render() {
-    const { alphanum, data, i, dataEnd } = this.props
+    const { alphanum, data, i, dataEnd, length } = this.props
     return (
       <div className="Display section">
-        {data.map((d,ii) => 
+        {data.slice(0, length).map((d,ii) => 
           <Letter 
             alphanum={alphanum}
             key={ii}

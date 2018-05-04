@@ -1,5 +1,15 @@
+@font-face {
+  font-family: 'FedraMonoPro-Bold';
+  src: local('FedraMonoPro-Bold'), url(./fonts/FedraMonoPro-Bold.otf) format('opentype');
+}
+
+body{
+  background-color: #000;
+}
+
 .App {
   text-align: center;
+  font-family: 'FedraMonoPro-Bold';
 }
 
 .App-logo {
@@ -23,9 +33,21 @@
 }
 
 .section {
-  display: inline-block;
+  /*display: inline-block;*/
+  margin-top: 10px;
+}
+.section .row{
+  display: inline;
+  margin-top: 5px;
+  margin-right: 20px;
 }
 
 .Controls{
-  text-align: left;
+  color: #fff;
+  /*text-align: left;*/
+}
+
+.Display{
+  /*vertical-align: top;*/
+  /*text-align: right;*/
 }

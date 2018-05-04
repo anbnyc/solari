@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
-import { timer } from 'd3-timer'
 
 import Display from './Display'
 import Controls from './Controls'
 import './App.css';
 
 const alphanum = [
-  'A','B','C','D','E','F','G','H','I','J','K','L','M',
+  ' ','A','B','C','D','E','F','G','H','I','J','K','L','M',
   'N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
-  '1','2','3','4','5','6','7','8','9','0',' '
+  '1','2','3','4','5','6','7','8','9','0'
 ]
 
 const stringToIndexArray = (text,maxLen) => text
@@ -16,63 +15,88 @@ const stringToIndexArray = (text,maxLen) => text
   .split('')
   .map(d => alphanum.indexOf(d.toUpperCase()))
   .slice(0, maxLen ? maxLen : text.length)
+const padder = (len, arr) => Array(Math.max(0, len - arr.length)).fill(0).concat(arr).slice(0,len)
 let t;
+const l = 8;
 
 class App extends Component {
 
   constructor(props){
     super(props);
     this.state = {
-      speed: 20,
-      data: [13, 4, 22, 36, 24, 14, 17, 10],
-      dataEnd: [36, 2, 7, 8, 2, 0, 6, 14],
+      speed: 1,
+      length: l,
+      dataStart:padder(l, stringToIndexArray('NEW YORK')),
+      dataEnd:  padder(l, stringToIndexArray('LONDON')),
       i: 0,
+      step: 0,
     }
     this.runTransition = this.runTransition.bind(this)
     this.changeText = this.changeText.bind(this)
+    this.padText = this.padText.bind(this)
+    this.changeValue = this.changeValue.bind(this)
+  }
+
+  componentWillMount(){
+    this.setState({
+      data: this.state.dataStart
+    })
+  }
+
+  changeValue(field, value){
+    this.setState({ [field]: value })
   }
 
   changeText(field, text){
+    this.setState({ i: 0, [field]: stringToIndexArray(text) || [''] })
+  }
+
+  padText(field, text){
     let clean = stringToIndexArray(text)
-    let newDataEnd
-    if(field === 'data' && clean.length !== this.state.dataEnd.length){
-      newDataEnd = Array(Math.max(0, clean.length - this.state.dataEnd.length)).fill(36).concat(this.state.dataEnd)
-    } else if (field === 'dataEnd' && clean.length !== this.state.data.length){
-      clean = Array(Math.max(0, this.state.data.length - clean.length)).fill(36).concat(clean)
-    }
-    this.setState({ 
-      [field]: clean,
-      ...(newDataEnd ? { dataEnd: newDataEnd } : {} )
-    })
+    this.setState({ [field]: padder(this.state.length, clean) })
   }
 
   runTransition(){
-    const { data, dataEnd, speed } = this.state;
     let i = 0
-    t = timer(() => {
-      i += speed
-      this.setState({ i })
+    const raf = () => {
+      const { speed, step } = this.state
+      i += speed;
+      this.setState({ i, speed: speed })
       if(i >= 180){
         i = 0;
-        this.setState({
-          i,
-          data: data.map((d,ii) => d === dataEnd[ii] ? d : (d+1) % alphanum.length)
+        this.setState({ 
+          i, 
+          step: step + 1,
+          data: this.state.data.map((d,ii) => d === this.state.dataEnd[ii] ? d : (d+1) % alphanum.length),
         })
-        if(data.reduce((t,v,ii) => t && v === dataEnd[ii], true)){
-          t.stop()
-        }
       }
-    })
+      if(this.state.data.reduce((t,v,ii) => t && v === this.state.dataEnd[ii], true)){
+        this.stopTransition();
+        this.setState({ i: 0 })
+      } else {
+        t = requestAnimationFrame(raf);
+      }
+    }
+    raf()
+  }
+
+  stopTransition(){
+    cancelAnimationFrame(t);
   }
 
   render() {
     return (
       <div className="App">
         <Controls
-          data={this.state.data.map(d => alphanum[d]).join('')}
-          dataEnd={this.state.dataEnd.map(d => alphanum[d]).join('')}
+          {...this.state}
+          dataStart={this.state.dataStart.map(d => alphanum[d]).join('')}
+          dataEnd={this.state.dataEnd.map(d => alphanum[d] || '').join('')}
+          changeValue={this.changeValue}
           changeText={this.changeText}
-          runTransition={this.runTransition}/>
+          padText={this.padText}
+          runTransition={this.runTransition}
+          stopTransition={this.stopTransition}
+          />
         <Display 
           alphanum={alphanum}
           {...this.state} />
