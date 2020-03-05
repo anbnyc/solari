@@ -2,8 +2,11 @@ import React, { Component } from 'react';
 import './App.css';
 
 const RangeControl = props =>
-  (<div className="row">
-    <label htmlFor={props.id}>{props.label}: {props.value}</label>
+  (<div className="range-control row">
+    <label htmlFor={props.id}>
+      <span className="name">{props.label}: </span>
+      <span className="value">{props.value}</span>
+    </label>
     <input 
       onChange={e => props.changeValue(props.id, +e.target.value)} 
       type='range' 
@@ -17,7 +20,9 @@ class Controls extends Component {
   render() {
     return (
       <div className="Controls section">
-        <div className="row">Step {this.props.step}</div>
+        <div className="row">Step 
+          <span className="value">{this.props.step}</span>
+        </div>
         <div className="row">
           <label htmlFor='dataStart'>Start </label>
           <input 
@@ -60,6 +65,9 @@ class Controls extends Component {
         </div>
         <div className="row">
           <button onClick={() => this.props.stopTransition()}>STOP</button>
+        </div>
+        <div className="row">
+          <button onClick={() => this.props.resetTransition()}>RESET</button>
         </div>
       </div>
     );

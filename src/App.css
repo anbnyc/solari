@@ -42,6 +42,12 @@ body{
   margin-right: 20px;
 }
 
+.range-control label .value, .section .row .value{
+  display: inline-block;
+  width: 30px;
+  text-align: right;
+}
+
 .Controls{
   color: #fff;
   /*text-align: left;*/
